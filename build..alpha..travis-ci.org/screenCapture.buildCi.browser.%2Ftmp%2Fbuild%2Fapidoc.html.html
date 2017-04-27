@@ -442,7 +442,23 @@
         }
     }
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+    expect(require("./someOtherModule.js").__set__).to.be(undefined);
+    expect(require("./someOtherModule.js").__get__).to.be(undefined);
+    expect(require("./someOtherModule.js").__with__).to.be(undefined);
+});
+
+it("should not override/influence global objects by default", function () {
+    // This should throw no exception
+    rewire("./moduleA.js").<span class="apidocCodeKeywordSpan">checkSomeGlobals</span>();
+    rewire("./moduleB.js").checkSomeGlobals();
+});
+
+// This is just an integration test for the __set__ method
+// You can find a full test for __set__ under /test/__set__.test.js
+it("should provide a working __set__ method", function () {
+    var rewiredModuleA = rewire("./moduleA.js"),
+...</pre></li>
     </ul>
 
 
@@ -457,7 +473,23 @@
     <li>description and source-code<pre class="apidocCodePre">function getBuffer() {
     return Buffer;
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+expect(rewiredModuleB.getConsole()).not.to.be(consoleMock);
+expect(console).not.to.be(consoleMock);
+expect(rewiredModuleA.getFilename()).to.be(newFilename);
+expect(rewiredModuleB.getFilename()).not.to.be(newFilename);
+expect(console).not.to.be(newFilename);
+if (typeof window === "undefined") {
+    rewiredModuleA.__set__("Buffer", bufferMock);
+    expect(rewiredModuleA.<span class="apidocCodeKeywordSpan">getBuffer</span>()).to.be(bufferMock);
+    expect(rewiredModuleB.getBuffer()).not.to.be(bufferMock);
+    expect(Buffer).not.to.be(bufferMock);
+} else {
+    rewiredModuleA.__set__("document", documentMock);
+    expect(rewiredModuleA.getDocument()).to.be(documentMock);
+    expect(rewiredModuleB.getDocument() === documentMock).to.be(false);
+    expect(document === documentMock).to.be(false);
+...</pre></li>
     </ul>
 
 
@@ -472,7 +504,23 @@
     <li>description and source-code<pre class="apidocCodePre">function getConsole() {
     return console;
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+    documentMock = {},
+    newFilename = "myFile.js";
+
+rewiredModuleA.__set__({
+    console: consoleMock,
+    __filename: newFilename
+});
+expect(rewiredModuleA.<span class="apidocCodeKeywordSpan">getConsole</span>()).to.be(consoleMock);
+expect(rewiredModuleB.getConsole()).not.to.be(consoleMock);
+expect(console).not.to.be(consoleMock);
+expect(rewiredModuleA.getFilename()).to.be(newFilename);
+expect(rewiredModuleB.getFilename()).not.to.be(newFilename);
+expect(console).not.to.be(newFilename);
+if (typeof window === "undefined") {
+    rewiredModuleA.__set__("Buffer", bufferMock);
+...</pre></li>
     </ul>
 
 
@@ -487,7 +535,23 @@
     <li>description and source-code<pre class="apidocCodePre">function getDocument() {
     return document;
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+    if (typeof window === "undefined") {
+        rewiredModuleA.__set__("Buffer", bufferMock);
+        expect(rewiredModuleA.getBuffer()).to.be(bufferMock);
+        expect(rewiredModuleB.getBuffer()).not.to.be(bufferMock);
+        expect(Buffer).not.to.be(bufferMock);
+    } else {
+        rewiredModuleA.__set__("document", documentMock);
+        expect(rewiredModuleA.<span class="apidocCodeKeywordSpan">getDocument</span>()).to.be(documentMock);
+        expect(rewiredModuleB.getDocument() === documentMock).to.be(false);
+        expect(document === documentMock).to.be(false);
+    }
+});
+
+it("should be possible to mock global objects that are added on runtime", function () {
+    var rewiredModule;
+...</pre></li>
     </ul>
 
 
@@ -502,7 +566,25 @@
     <li>description and source-code<pre class="apidocCodePre">function getFilename() {
     return __filename;
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+function checkForTypeError(err) {
+expect(err.constructor).to.be(TypeError);
+}
+
+describe("rewire " + (typeof testEnv === "undefined"? "(node)": "(" + testEnv + ")&amp;#
+x22;), function () {
+
+it("should work like require()", function () {
+    rewire("./moduleA.js").<span class="apidocCodeKeywordSpan">getFilename</span>();
+    require("./moduleA.js").getFilename();
+    expect(rewire("./moduleA.js").getFilename()).to.eql(require("./moduleA.js").getFilename());
+    expect(rewire("../testLib/someOtherModule.js").filename).to.eql(require("../testLib/someOtherModule.js").
+filename);
+});
+
+it("should return a fresh instance of the module", function () {
+    var someOtherModule = require("./someOtherModule.js"),
+...</pre></li>
     </ul>
 
 
@@ -517,7 +599,22 @@
     <li>description and source-code<pre class="apidocCodePre">function getMyNumber() {
     return myNumber;
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+// This is just an integration test for the __set__ method
+// You can find a full test for __set__ under /test/__set__.test.js
+it("should provide a working __set__ method", function () {
+    var rewiredModuleA = rewire("./moduleA.js"),
+        newObj = {};
+
+    expect(rewiredModuleA.<span class="apidocCodeKeywordSpan">getMyNumber</span>()).to.be(0);
+    rewiredModuleA.__set__("myNumber", 2);
+    expect(rewiredModuleA.getMyNumber()).to.be(2);
+    rewiredModuleA.__set__("myObj", newObj);
+    expect(rewiredModuleA.getMyObj()).to.be(newObj);
+    rewiredModuleA.__set__("env", "ENVENV");
+});
+...</pre></li>
     </ul>
 
 
@@ -532,7 +629,23 @@
     <li>description and source-code<pre class="apidocCodePre">function getMyObj() {
     return myObj;
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+    var rewiredModuleA = rewire("./moduleA.js"),
+        newObj = {};
+
+    expect(rewiredModuleA.getMyNumber()).to.be(0);
+    rewiredModuleA.__set__("myNumber", 2);
+    expect(rewiredModuleA.getMyNumber()).to.be(2);
+    rewiredModuleA.__set__("myObj", newObj);
+    expect(rewiredModuleA.<span class="apidocCodeKeywordSpan">getMyObj</span>()).to.be(newObj);
+    rewiredModuleA.__set__("env", "ENVENV");
+});
+
+// This is just an integration test for the __get__ method
+// You can find a full test for __get__ under /test/__get__.test.js
+it("should provide a working __get__ method", function () {
+    var rewiredModuleA = rewire("./moduleA.js");
+...</pre></li>
     </ul>
 
 
@@ -689,7 +802,23 @@ function coffeeExtension(module, filename) {
         }
     }
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+    expect(require("./someOtherModule.js").__set__).to.be(undefined);
+    expect(require("./someOtherModule.js").__get__).to.be(undefined);
+    expect(require("./someOtherModule.js").__with__).to.be(undefined);
+});
+
+it("should not override/influence global objects by default", function () {
+    // This should throw no exception
+    rewire("./moduleA.js").<span class="apidocCodeKeywordSpan">checkSomeGlobals</span>();
+    rewire("./moduleB.js").checkSomeGlobals();
+});
+
+// This is just an integration test for the __set__ method
+// You can find a full test for __set__ under /test/__set__.test.js
+it("should provide a working __set__ method", function () {
+    var rewiredModuleA = rewire("./moduleA.js"),
+...</pre></li>
     </ul>
 
 
@@ -704,7 +833,23 @@ function coffeeExtension(module, filename) {
     <li>description and source-code<pre class="apidocCodePre">function getBuffer() {
     return Buffer;
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+expect(rewiredModuleB.getConsole()).not.to.be(consoleMock);
+expect(console).not.to.be(consoleMock);
+expect(rewiredModuleA.getFilename()).to.be(newFilename);
+expect(rewiredModuleB.getFilename()).not.to.be(newFilename);
+expect(console).not.to.be(newFilename);
+if (typeof window === "undefined") {
+    rewiredModuleA.__set__("Buffer", bufferMock);
+    expect(rewiredModuleA.<span class="apidocCodeKeywordSpan">getBuffer</span>()).to.be(bufferMock);
+    expect(rewiredModuleB.getBuffer()).not.to.be(bufferMock);
+    expect(Buffer).not.to.be(bufferMock);
+} else {
+    rewiredModuleA.__set__("document", documentMock);
+    expect(rewiredModuleA.getDocument()).to.be(documentMock);
+    expect(rewiredModuleB.getDocument() === documentMock).to.be(false);
+    expect(document === documentMock).to.be(false);
+...</pre></li>
     </ul>
 
 
@@ -719,7 +864,23 @@ function coffeeExtension(module, filename) {
     <li>description and source-code<pre class="apidocCodePre">function getConsole() {
     return console;
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+    documentMock = {},
+    newFilename = "myFile.js";
+
+rewiredModuleA.__set__({
+    console: consoleMock,
+    __filename: newFilename
+});
+expect(rewiredModuleA.<span class="apidocCodeKeywordSpan">getConsole</span>()).to.be(consoleMock);
+expect(rewiredModuleB.getConsole()).not.to.be(consoleMock);
+expect(console).not.to.be(consoleMock);
+expect(rewiredModuleA.getFilename()).to.be(newFilename);
+expect(rewiredModuleB.getFilename()).not.to.be(newFilename);
+expect(console).not.to.be(newFilename);
+if (typeof window === "undefined") {
+    rewiredModuleA.__set__("Buffer", bufferMock);
+...</pre></li>
     </ul>
 
 
@@ -734,7 +895,23 @@ function coffeeExtension(module, filename) {
     <li>description and source-code<pre class="apidocCodePre">function getDocument() {
     return document;
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+    if (typeof window === "undefined") {
+        rewiredModuleA.__set__("Buffer", bufferMock);
+        expect(rewiredModuleA.getBuffer()).to.be(bufferMock);
+        expect(rewiredModuleB.getBuffer()).not.to.be(bufferMock);
+        expect(Buffer).not.to.be(bufferMock);
+    } else {
+        rewiredModuleA.__set__("document", documentMock);
+        expect(rewiredModuleA.<span class="apidocCodeKeywordSpan">getDocument</span>()).to.be(documentMock);
+        expect(rewiredModuleB.getDocument() === documentMock).to.be(false);
+        expect(document === documentMock).to.be(false);
+    }
+});
+
+it("should be possible to mock global objects that are added on runtime", function () {
+    var rewiredModule;
+...</pre></li>
     </ul>
 
 
@@ -749,7 +926,25 @@ function coffeeExtension(module, filename) {
     <li>description and source-code<pre class="apidocCodePre">function getFilename() {
     return __filename;
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+function checkForTypeError(err) {
+expect(err.constructor).to.be(TypeError);
+}
+
+describe("rewire " + (typeof testEnv === "undefined"? "(node)": "(" + testEnv + ")&amp;#
+x22;), function () {
+
+it("should work like require()", function () {
+    rewire("./moduleA.js").<span class="apidocCodeKeywordSpan">getFilename</span>();
+    require("./moduleA.js").getFilename();
+    expect(rewire("./moduleA.js").getFilename()).to.eql(require("./moduleA.js").getFilename());
+    expect(rewire("../testLib/someOtherModule.js").filename).to.eql(require("../testLib/someOtherModule.js").
+filename);
+});
+
+it("should return a fresh instance of the module", function () {
+    var someOtherModule = require("./someOtherModule.js"),
+...</pre></li>
     </ul>
 
 
@@ -764,7 +959,22 @@ function coffeeExtension(module, filename) {
     <li>description and source-code<pre class="apidocCodePre">function getMyNumber() {
     return myNumber;
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+// This is just an integration test for the __set__ method
+// You can find a full test for __set__ under /test/__set__.test.js
+it("should provide a working __set__ method", function () {
+    var rewiredModuleA = rewire("./moduleA.js"),
+        newObj = {};
+
+    expect(rewiredModuleA.<span class="apidocCodeKeywordSpan">getMyNumber</span>()).to.be(0);
+    rewiredModuleA.__set__("myNumber", 2);
+    expect(rewiredModuleA.getMyNumber()).to.be(2);
+    rewiredModuleA.__set__("myObj", newObj);
+    expect(rewiredModuleA.getMyObj()).to.be(newObj);
+    rewiredModuleA.__set__("env", "ENVENV");
+});
+...</pre></li>
     </ul>
 
 
@@ -779,7 +989,23 @@ function coffeeExtension(module, filename) {
     <li>description and source-code<pre class="apidocCodePre">function getMyObj() {
     return myObj;
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+    var rewiredModuleA = rewire("./moduleA.js"),
+        newObj = {};
+
+    expect(rewiredModuleA.getMyNumber()).to.be(0);
+    rewiredModuleA.__set__("myNumber", 2);
+    expect(rewiredModuleA.getMyNumber()).to.be(2);
+    rewiredModuleA.__set__("myObj", newObj);
+    expect(rewiredModuleA.<span class="apidocCodeKeywordSpan">getMyObj</span>()).to.be(newObj);
+    rewiredModuleA.__set__("env", "ENVENV");
+});
+
+// This is just an integration test for the __get__ method
+// You can find a full test for __get__ under /test/__get__.test.js
+it("should provide a working __get__ method", function () {
+    var rewiredModuleA = rewire("./moduleA.js");
+...</pre></li>
     </ul>
 
 
@@ -937,7 +1163,23 @@ Module.wrapper[0] = moduleWrapper0;
     <li>description and source-code<pre class="apidocCodePre">function doSomethingUnstrict() {
     var caller = arguments.callee.caller;   // this should throw an error as a proof that strict mode is on
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+expect(rewire("./moduleA.js")).not.to.be(rewire("./moduleA.js"));
+    });
+
+    it("should preserve the strict mode", function () {
+var strictModule = rewire("./strictModule.js");
+
+expect(function () {
+    strictModule.<span class="apidocCodeKeywordSpan">doSomethingUnstrict</span>();
+}).to.throwException(checkForTypeError);
+    });
+
+    it("should not modify line numbers in stack traces", function () {
+var throwError = rewire("./throwError.js");
+
+if (process.env.running_under_istanbul === "1") {
+...</pre></li>
     </ul>
 
 
