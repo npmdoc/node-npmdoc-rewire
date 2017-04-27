@@ -1,6 +1,6 @@
 # npmdoc-rewire
 
-#### api documentation for  [rewire (v2.5.2)](https://github.com/jhnns/rewire)  [![npm package](https://img.shields.io/npm/v/npmdoc-rewire.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-rewire) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-rewire.svg)](https://travis-ci.org/npmdoc/node-npmdoc-rewire)
+#### basic api documentation for  [rewire (v2.5.2)](https://github.com/jhnns/rewire)  [![npm package](https://img.shields.io/npm/v/npmdoc-rewire.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-rewire) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-rewire.svg)](https://travis-ci.org/npmdoc/node-npmdoc-rewire)
 
 #### Easy dependency injection for node.js unit testing
 
@@ -74,7 +74,8 @@
         "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha",
         "test": "mocha -R spec --check-leaks"
     },
-    "version": "2.5.2"
+    "version": "2.5.2",
+    "bin": {}
 }
 ```
 
